@@ -27,7 +27,6 @@ typedef struct buffer{
     pthread_mutex_t T_mutex;
     pthread_mutex_t D_mutex;
     pthread_mutex_t Full_mutex;
-    pthread_mutex_t Empty_mutex;
 
 
     pthread_cond_t notEmpty;

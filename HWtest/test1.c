@@ -64,6 +64,7 @@ void testFPRINTF(void)
 
 void testPut(void)
 {
+    
     char* msgg="hello";
     buffer_t* buffer= createBuffer(1);
     msg_t* msg= msg_init(msgg);
@@ -89,38 +90,38 @@ void testThread(void)
 {
     char* parola="hello";
     
-    buffer_t* buffer= createBuffer(1);
+    buffer_t* buffer= createBuffer(2);
     msg_t* msg= msg_init(parola);
     
-    pthread_t p1,p2;
+    pthread_t p1,p2,p3,p4,p5,p6;
     
     struct arg_struct ars;
     ars.buffer=buffer;
     ars.msg=msg;
     
-    
-    pthread_create(&p1, NULL, &do_put_bloccante, &ars);
-    pthread_create(&p2, NULL, &do_get_bloccante, &buffer);
+    pthread_create(&p1, NULL, &do_get_bloccante, &ars);
+    pthread_create(&p2, NULL, &do_get_bloccante, &ars);
+    pthread_create(&p3, NULL, &do_put_bloccante, &ars);
+    pthread_create(&p4, NULL, &do_get_bloccante, &ars);
+    pthread_create(&p5, NULL, &do_put_bloccante, &ars);
+    pthread_create(&p6, NULL, &do_put_bloccante, &ars);
+
+
+
     
     pthread_join(p1, NULL);
     pthread_join(p2, NULL);
-    
+    pthread_join(p3, NULL);
+    pthread_join(p4, NULL);
+    pthread_join(p5, NULL);
 
 
-    
-    CU_ASSERT(0 == buffer->full);
+    CU_ASSERT( 0 == buffer->full);
 //    pthread_create(&p3, NULL, &do_put_bloccante, &ars);
 //    pthread_join(p3, NULL);
     
 }
 
-void testProva(void){
-    pthread_t thread;
-    fprintf (stderr, "<><><><><>main thread pid is %d\n", (int) getpid ());
-    pthread_create (&thread, NULL, &thread_function, NULL);
-    /* Spin forever.  */
-    while (1);
-}
 
 
 
@@ -162,8 +163,7 @@ int main()
         return CU_get_error();
     }
     
-    if ((NULL == CU_add_test(pSuite_blocking, "test of P()", testThread))||
-        (NULL == CU_add_test(pSuite_blocking, "test of P()", testProva)))
+    if ((NULL == CU_add_test(pSuite_blocking, "test of P()", testThread)))
     {
         CU_cleanup_registry();
         return CU_get_error();

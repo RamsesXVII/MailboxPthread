@@ -26,10 +26,8 @@ buffer_t* buffer_init(unsigned int maxsize){
     buffer->buffer_init = buffer_init;
     buffer->buffer_destroy=buffer_destroy;
     
-    buffer->T_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;  // necessari?
-    buffer->D_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;  // necessari?
+
     buffer->Full_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;     // mutex che gestisce corse critiche su var.cond.
-    buffer->Empty_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;    // mutex che gestisce corse critiche su var.cond.
  
     buffer->notEmpty= (pthread_cond_t)PTHREAD_COND_INITIALIZER;           //var cond che serve a sincroizzarsi
     buffer->notFull= (pthread_cond_t)PTHREAD_COND_INITIALIZER;
@@ -41,12 +39,14 @@ buffer_t* buffer_init(unsigned int maxsize){
 
 msg_t* put_bloccante(buffer_t* buffer, msg_t* msg){
     
-    int pid;
-    printf("%d:sto per inserire",getpid());
-    pthread_mutex_lock(&buffer->Empty_mutex);     //voglio accedere alla variabile condizione senza interferenze
+    pthread_t self_id;
+    self_id=pthread_self();
+ //   printf("\nHello from thread, i'm going to put.  My id is  %u and now there are %d elements into the buufer\n",self_id,buffer->full);
+    
+    pthread_mutex_lock(&buffer->Full_mutex);     //voglio accedere alla variabile condizione senza interferenze
     while(buffer->empty == 0){ //una variabile per verigi
         // gli passo anche il riferimento al mutex per far entrare in regione critica anche altri f.d.e
-        pthread_cond_wait(&buffer->notFull, &buffer->Empty_mutex);
+        pthread_cond_wait(&buffer->notFull, &buffer->Full_mutex);
     }
 
     
@@ -58,43 +58,49 @@ msg_t* put_bloccante(buffer_t* buffer, msg_t* msg){
     msg_t* new_msg=msg;
     buffer->cells[d_pos]=*new_msg;
     buffer->D=(d_pos+1)%((buffer->size));
-    buffer->empty=buffer->empty-1;
-    buffer->full=buffer->full+1;
+    buffer->empty--;
+    buffer->full++;
     
-    pthread_mutex_unlock(&buffer->Empty_mutex);
-
-    
-    pthread_mutex_lock(&buffer->Full_mutex);     //voglio accedere alla variabile condizione senza interferenze
     pthread_cond_signal(&buffer->notEmpty);
     pthread_mutex_unlock(&buffer->Full_mutex);
 
-    printf("%d: inserito",getpid());
+//    printf("%d: inserito",getpid());
+//    printf("Ho finito di inserire %d",self_id,buffer->full);
+
     return new_msg;
 }
 
 msg_t* get_bloccante(buffer_t* buffer){
     
  //   fprintf (stderr, "child thread pid is %d\n", (int) getpid ());
-    printf("%d: sto per prelevare",getpid());
-
+    
+    pthread_t self_id;
+    self_id=pthread_self();
+//    printf("\nHello from thread, i'm going to get.  My id is  %u\n and now there are %d elements into the buufer\n",self_id,buffer->full);
+    
     pthread_mutex_lock(&buffer->Full_mutex);
+    
     while(buffer->full == 0){
+//        printf("******************************");
+
         pthread_cond_wait(&buffer->notEmpty, &buffer->Full_mutex);
+ //       printf("******************************");
+
     }
     
     msg_t* msg=NULL;
     int t_pos=buffer->T;
     msg=&buffer->cells[t_pos];
     buffer->T = (t_pos+1)%((buffer->size));
-    buffer->empty=buffer->empty+1;
-    buffer->full=buffer->full-1;
-    pthread_mutex_unlock(&buffer->Empty_mutex);
+    buffer->empty++;
+    buffer->full--;
 
-    pthread_mutex_lock(&buffer->Empty_mutex);     //voglio accedere alla variabile condizione senza interferenze
-    pthread_cond_signal(&buffer->notFull);
-    pthread_mutex_unlock(&buffer->Empty_mutex);
     
-    printf("preso ");
+    pthread_cond_signal(&buffer->notFull);
+    pthread_mutex_unlock(&buffer->Full_mutex);
+    
+ //   printf("preso ");
+//    printf("Ho finito di prelevare %d",self_id,buffer->full);
     return msg;
 
 }
@@ -106,18 +112,15 @@ msg_t* do_put_bloccante(void* arguments){
 }
 
 msg_t* do_get_bloccante(void* arguments){
-    buffer_t *buffer=arguments;
-    return get_bloccante(buffer);
+    struct arg_struct *args=arguments;
+    return get_bloccante(args->buffer);
+
 }
 
 
 void buffer_destroy(buffer_t* buffer){
-//    int size=buffer->size;
-//    int i;
- //   for (i=0; i<size; i++)
- //       buffer->cells[i].msg_destroy;
- //   free(buffer);
-    buffer=NULL;
+    free(buffer->cells);
+    free(buffer);
 }
 
 
