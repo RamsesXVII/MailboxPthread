@@ -1,0 +1,15 @@
+HWtest.xcodeproj/xcuserdata/mattiaiodice.xcuserdatad/xcdebugger/
+Icon?
+.xcodeproj
+_Store
+.DS_Store?
+.Trashes
+.vagrant/
+.classpath
+.project
+.build/
+.DS_Store
+.settings/
+boxes/
+/vagrant-spec.config.rb
+Icon?

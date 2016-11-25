@@ -5,6 +5,8 @@
 //  Created by Mattia Iodice on 22/11/16.
 //  Copyright © 2016 Mattia Iodice. All rights reserved.
 //
+
+//TODO controllare bene di non aver sbagliato msg_init
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -24,6 +26,7 @@ msg_t *msg_init(void *content){
 }
 
 void msg_destroy(msg_t *msg){
+    free(msg->content); 
     free(msg);
 }
 
@@ -34,7 +37,6 @@ msg_t *msg_copy(msg_t* msg){
 }
 
 void msg_destroy_string(msg_t* msg) {
-    /*bisogna cancellare anche i riferimenti anche sel contenuto, solo free msg cancellerebbe solo  ciò in msg*/
     free(msg->content); // free copia privata
     free(msg);          // free struct
 }
