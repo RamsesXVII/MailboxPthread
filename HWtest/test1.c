@@ -90,7 +90,7 @@ void testThread(void)
 {
     char* parola="hello";
     
-    buffer_t* buffer= createBuffer(2);
+    buffer_t* buffer= createBuffer(1);
     msg_t* msg= msg_init(parola);
     
     pthread_t p1,p2,p3,p4,p5,p6;
@@ -102,7 +102,7 @@ void testThread(void)
     pthread_create(&p1, NULL, &do_get_bloccante, &ars);
     pthread_create(&p2, NULL, &do_get_bloccante, &ars);
     pthread_create(&p3, NULL, &do_put_bloccante, &ars);
-    pthread_create(&p4, NULL, &do_get_bloccante, &ars);
+ //   pthread_create(&p4, NULL, &do_get_bloccante, &ars);
     pthread_create(&p5, NULL, &do_put_bloccante, &ars);
     pthread_create(&p6, NULL, &do_put_bloccante, &ars);
 
@@ -116,12 +116,34 @@ void testThread(void)
     pthread_join(p5, NULL);
 
 
-    CU_ASSERT( 0 == buffer->full);
+    CU_ASSERT( 1 == buffer->full);
 //    pthread_create(&p3, NULL, &do_put_bloccante, &ars);
 //    pthread_join(p3, NULL);
     
 }
 
+void testNotBlocking(void)
+{
+
+    char* parola="hello";
+    
+    buffer_t* buffer= createBuffer(1);
+    msg_t* msg= msg_init(parola);
+    
+    pthread_t p1,p2,p3,p4,p5,p6;
+    
+    struct arg_struct ars;
+    ars.buffer=buffer;
+    ars.msg=msg;
+    CU_ASSERT( 0 == buffer->full);
+
+    pthread_create(&p1, NULL, &do_get_non_bloccante, &ars);
+    pthread_create(&p1, NULL, &do_put_non_bloccante, &ars);
+    CU_ASSERT( 0 == buffer->full);
+
+
+
+}
 
 
 
@@ -133,6 +155,8 @@ int main()
 {
     CU_pSuite pSuite = NULL;
     CU_pSuite pSuite_blocking = NULL;
+    CU_pSuite pSuite_not_blocking = NULL;
+
 
     
     /* initialize the CUnit test registry */
@@ -142,6 +166,7 @@ int main()
     /* add a suite to the registry */
     pSuite = CU_add_suite("Suite_1", init_suite1, clean_suite1);
     pSuite_blocking = CU_add_suite("blocking_test_suite", init_suite1, clean_suite1);
+    pSuite_not_blocking=CU_add_suite("not_blocking_test_suite", init_suite1, clean_suite1);
 
     if (NULL == pSuite) {
         CU_cleanup_registry();
@@ -149,6 +174,11 @@ int main()
     }
     
     if (NULL ==pSuite_blocking){
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    
+    if (NULL ==pSuite_not_blocking){
         CU_cleanup_registry();
         return CU_get_error();
     }
@@ -164,6 +194,12 @@ int main()
     }
     
     if ((NULL == CU_add_test(pSuite_blocking, "test of P()", testThread)))
+    {
+        CU_cleanup_registry();
+        return CU_get_error();
+    }
+    
+    if ((NULL == CU_add_test(pSuite_blocking, "test of P1()", testNotBlocking)))
     {
         CU_cleanup_registry();
         return CU_get_error();

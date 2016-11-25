@@ -10,6 +10,14 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "buffer_type.h"
+#define BUFFER_ERROR  (msg_t *) NULL
+
+
+
+
+/*al posto di usare full ed empty usasare soltanto k*/
+
+
 
 
 buffer_t* buffer_init(unsigned int maxsize){
@@ -27,12 +35,66 @@ buffer_t* buffer_init(unsigned int maxsize){
     buffer->buffer_destroy=buffer_destroy;
     
 
-    buffer->Full_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;     // mutex che gestisce corse critiche su var.cond.
+    buffer->Full_mutex = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER; // mutex che gestisce corse critiche su var.cond.
  
-    buffer->notEmpty= (pthread_cond_t)PTHREAD_COND_INITIALIZER;           //var cond che serve a sincroizzarsi
+    buffer->notEmpty= (pthread_cond_t)PTHREAD_COND_INITIALIZER;     //var cond che serve a sincroizzarsi
     buffer->notFull= (pthread_cond_t)PTHREAD_COND_INITIALIZER;
 
     return buffer;
+}
+
+
+
+
+msg_t* put_non_bloccante(buffer_t* buffer, msg_t* msg){
+    pthread_mutex_lock(&buffer->Full_mutex);     //voglio accedere alla variabile condizione senza interferenze
+    if (buffer->empty == 0)
+        return BUFFER_ERROR;
+    else{
+        int d_pos = buffer->D;
+        
+        msg_t* new_msg=msg;
+        buffer->cells[d_pos]=*new_msg;
+        buffer->D=(d_pos+1)%((buffer->size));
+        buffer->empty--;
+        buffer->full++;
+        
+        pthread_cond_signal(&buffer->notEmpty);
+        pthread_mutex_unlock(&buffer->Full_mutex);
+
+        return  new_msg;
+        
+    }
+}
+
+    
+
+
+
+msg_t* get_non_bloccante(buffer_t* buffer){
+    pthread_mutex_lock(&buffer->Full_mutex);     //voglio accedere alla variabile condizione senza interferenze
+    if(buffer->full == 0)
+        return BUFFER_ERROR;
+    else{
+        msg_t* msg=NULL;
+        int t_pos=buffer->T;
+        msg=&buffer->cells[t_pos];
+        buffer->T = (t_pos+1)%((buffer->size));
+        buffer->empty++;
+        buffer->full--;
+        
+        
+        pthread_cond_signal(&buffer->notFull);
+        pthread_mutex_unlock(&buffer->Full_mutex);
+        
+        //   printf("preso ");
+        //    printf("Ho finito di prelevare %d",self_id,buffer->full);
+        return msg;
+
+    
+    
+    }
+
 }
 
 
@@ -111,10 +173,23 @@ msg_t* do_put_bloccante(void* arguments){
     return put_bloccante(args->buffer, args->msg);
 }
 
+msg_t* do_put_non_bloccante(void* arguments){
+    
+    struct arg_struct *args=arguments;
+    return put_non_bloccante(args->buffer, args->msg);
+}
+
+
 msg_t* do_get_bloccante(void* arguments){
     struct arg_struct *args=arguments;
     return get_bloccante(args->buffer);
 
+}
+
+msg_t* do_get_non_bloccante(void* arguments){
+    struct arg_struct *args=arguments;
+    return get_non_bloccante(args->buffer);
+    
 }
 
 

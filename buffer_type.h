@@ -82,6 +82,9 @@ msg_t* get_bloccante(buffer_t* buffer);
 msg_t* get_non_bloccante(buffer_t* buffer);
 
 msg_t* do_put_bloccante(void* arguments);
+msg_t* do_put_non_bloccante(void* arguments);
+
+msg_t* do_get_non_bloccante(void* arguments);
 msg_t* do_get_bloccante(void* arguments);
 
 
