@@ -12,23 +12,37 @@
 /* This suite tests an insertion and a getting into the buffer
  * It's a single-thread excecution
  */
-int init_suite1(void)
+int init_suiteBasic(void)
 {
-    buffer=buffer_init(1);
-    return 0;
+    bufferUnitary=buffer_init(1);
+    bufferNotUnitary=buffer_init(5);
+    
+    if(bufferUnitary!=NULL && bufferNotUnitary!=NULL)
+        return 0;
+    
+    else return 1;
     
 }
 
-int clean_suite1(void)
+int clean_suiteBasic(void)
 {
-    buffer_destroy(buffer);
+    buffer_destroy(bufferUnitary);
+    buffer_destroy(bufferNotUnitary);
     return 0;
 }
 
 void testBufferInit(void)
 {
-    if (NULL != buffer)
-        CU_ASSERT(1 == buffer->size);
+    CU_ASSERT(1 == bufferUnitary->size);
+    CU_ASSERT(0 == bufferUnitary->K);
+    CU_ASSERT(0 == bufferUnitary->T);
+    CU_ASSERT(0 == bufferUnitary->D);
+
+    CU_ASSERT(5 == bufferNotUnitary->size);
+    CU_ASSERT(0 == bufferNotUnitary->K);
+    CU_ASSERT(0 == bufferNotUnitary->T);
+    CU_ASSERT(0 == bufferNotUnitary->D);
+   
     
 }
 
@@ -38,17 +52,17 @@ void testPut(void)
     char* message_content="hello";
     msg_t* msg= msg_init(message_content);
     
-    msg=put_bloccante(buffer, msg);
-    CU_ASSERT(1 == buffer->K);
-    CU_ASSERT_STRING_EQUAL("hello", buffer->cells[0].content);
+    msg=put_bloccante(bufferUnitary, msg);
+    CU_ASSERT(1 == bufferUnitary->K);
+    CU_ASSERT_STRING_EQUAL("hello", bufferUnitary->cells[0].content);
     CU_ASSERT_STRING_EQUAL("hello", msg->content);
 }
 
 void testGet(void)
 {
-    
-    msg_t* msg= get_bloccante(buffer);
-    CU_ASSERT(0 == buffer->K);
+    msg_t* msg= get_bloccante(bufferUnitary);
+    CU_ASSERT(0 == bufferUnitary->K);
+    CU_ASSERT_STRING_EQUAL("hello", bufferUnitary->cells[0].content); //il messaggio non deve essere cancellato ma sovrascritto
     CU_ASSERT_STRING_EQUAL("hello", msg->content);
 }
 

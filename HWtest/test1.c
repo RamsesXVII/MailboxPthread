@@ -9,9 +9,9 @@ int main()
     if (CUE_SUCCESS != CU_initialize_registry())
         return CU_get_error();
     
-    pSuite_basicFunction = CU_add_suite("Single_thread_data_structure_test_suite", init_suite1, clean_suite1);
-    pSuite_blocking = CU_add_suite("Blocking_methods_test_suite", init_suite2, clean_suite2);
-    pSuite_not_blocking=CU_add_suite("not_blocking_methods_test_suite", init_suite3, clean_suite3);
+    pSuite_basicFunction = CU_add_suite("Single_thread_data_structure_test_suite", init_suiteBasic, clean_suiteBasic);
+    pSuite_blocking = CU_add_suite("Blocking_methods_test_suite", init_suiteTestBlocking, clean_suiteTestBlocking);
+    pSuite_not_blocking=CU_add_suite("not_blocking_methods_test_suite", init_suiteTestNotBlocking, clean_suiteTestNotBlocking);
     
     if (NULL == pSuite_basicFunction) {
         CU_cleanup_registry();
@@ -28,7 +28,7 @@ int main()
         return CU_get_error();
     }
 
-    if ((NULL == CU_add_test(pSuite_basicFunction, "test of buffer init", testBufferInit)) ||
+    if ((NULL == CU_add_test(pSuite_basicFunction, "test of buffer init function", testBufferInit)) ||
         (NULL == CU_add_test(pSuite_basicFunction, "test of put", testPut)) ||
         (NULL == CU_add_test(pSuite_basicFunction, "test of get", testGet)))
     {
@@ -36,8 +36,12 @@ int main()
         return CU_get_error();
     }
     
-    if ((NULL == CU_add_test(pSuite_blocking, "test of put and get with N=1", testThread))||
-        (NULL == CU_add_test(pSuite_blocking, "test of esecution of mailbox problem", testMailBox)))
+    
+    if ((NULL == CU_add_test(pSuite_blocking, "test of a blocking put into an empty buffer. Unitary buffer. ", blocking_put_emptyBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of a blocking get from a not empty buffer. Unitary buffer.", blocking_get_not_emptyBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of a blocking get from an empty buffer. Unitary buffer.", blocking_get_emptyBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of a blocking put into a full buffer. Unitary buffer.", blocking_put_fullBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of concurrents insertions and takings from a buffer. Unitary buffer.", concurrent_putandget_b1)))
     {
         CU_cleanup_registry();
         return CU_get_error();

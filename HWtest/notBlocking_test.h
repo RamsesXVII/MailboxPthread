@@ -9,11 +9,10 @@
 #ifndef notBlocking_test_h
 #define notBlocking_test_h
 
-#include "blocking_test.h"
+ #include "blocking_test.h"
 
-
-int init_suite3(void);
-int clean_suite3(void);
+int init_suiteTestNotBlocking(void);
+int clean_suiteTestNotBlocking(void);
 void testNotBlocking(void);
 void test_notBlocking_MailBox(void);
 

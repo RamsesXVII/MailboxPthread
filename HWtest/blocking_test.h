@@ -15,13 +15,20 @@
 
 
 
-static buffer_t* buffer;
+static buffer_t* bufferUnitary;
+static buffer_t* bufferNotUnitary;
 
 
-int init_suite2(void);
-int clean_suite2(void);
-void testThread(void);
-void testMailBox(void);
+
+int init_suiteTestBlocking(void);
+int clean_suiteTestBlocking(void);
+
+void blocking_put_emptyBuffer_b1(void);
+void blocking_get_not_emptyBuffer_b1(void);
+void blocking_get_emptyBuffer_b1(void);
+void blocking_put_fullBuffer_b1(void);
+void concurrent_putandget_b1(void);
+
 
 
 

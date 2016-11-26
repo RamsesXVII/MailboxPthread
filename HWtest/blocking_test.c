@@ -6,80 +6,167 @@
 //  Copyright © 2016 Mattia Iodice. All rights reserved.
 //
 
+
 #include "blocking_test.h"
 
-int init_suite2(void)
+int init_suiteTestBlocking(void)
 {
-    buffer=buffer_init(1);
-    return 0;
+    bufferUnitary=buffer_init(1);
+    bufferNotUnitary=buffer_init(5);
+    
+    if(bufferUnitary!=NULL && bufferNotUnitary!=NULL)
+        return 0;
+    
+    else return 1;
+    
     
 }
 
-int clean_suite2(void)
+int clean_suiteTestBlocking(void)
 {
-    buffer_destroy(buffer);
+    buffer_destroy(bufferUnitary);
+    buffer_destroy(bufferNotUnitary);
+
     return 0;
 }
 
 
-void testThread(void)
+void blocking_put_emptyBuffer_b1(void)
 {
-    
-    char* parola="hello";
-    
-    buffer_t* buffer= buffer_init(1);
-    msg_t* msg= msg_init(parola);
-    msg_t* msg_got1= NULL;
-    msg_t* msg_got2= NULL;
-    
-    pthread_t p1,p2,p3,c1,c2;
+    int* contentToInsert=42;
+    msg_t* msgToPut= msg_init(contentToInsert);
+    msg_t* msgReturnedByPut= NULL;
+
+    pthread_t p1;
     
     struct arg_struct ars;
-    ars.buffer=buffer;
-    ars.msg=msg;
+    ars.buffer=bufferUnitary;
+    ars.msg=msgToPut;
     
-    pthread_create(&c1, NULL, &do_get_bloccante, buffer);
     pthread_create(&p1, NULL, &do_put_bloccante, &ars);
-    pthread_create(&c2, NULL, &do_get_bloccante, buffer);
-    pthread_create(&p2, NULL, &do_put_bloccante, &ars);
-    pthread_create(&p3, NULL, &do_put_bloccante, &ars);
+    pthread_join(p1, &msgReturnedByPut);
     
-    pthread_join(p1, NULL);
-    pthread_join(p2, NULL);
-    pthread_join(p3, NULL);
-    pthread_join(c1, &msg_got1);
-    pthread_join(c2, &msg_got2);
-    
-    CU_ASSERT_STRING_EQUAL("hello", msg_got1->content);
-    CU_ASSERT_STRING_EQUAL("hello", msg_got2->content);
-    CU_ASSERT( 1 == buffer->K);
+    CU_ASSERT(1 == bufferUnitary->K);
+    CU_ASSERT(isFull(bufferUnitary));
+    CU_ASSERT_EQUAL(contentToInsert, msgReturnedByPut->content);
+    CU_ASSERT_EQUAL(contentToInsert, bufferUnitary->cells[0].content);
+
     
 }
 
+void blocking_get_not_emptyBuffer_b1(void){
+    msg_t* msgReturnedByGet= NULL;
 
-void testMailBox(void)
+    pthread_t c1;
+    
+    CU_ASSERT(1 == bufferUnitary->K);
+    CU_ASSERT(isFull(bufferUnitary));
+    
+    pthread_create(&c1, NULL, &do_get_bloccante, bufferUnitary);
+    pthread_join(c1, &msgReturnedByGet);
+    
+    CU_ASSERT(isEmpty(bufferUnitary));
+    CU_ASSERT_EQUAL(42,(int) msgReturnedByGet->content);
+
+
+
+}
+
+
+void blocking_get_emptyBuffer_b1(void)
 {
-    char* parola="hello";
+    int* contentToInsert=42;
+    bufferUnitary=buffer_init(1);
+    msg_t* msgReturnedByGet;
+
+    pthread_t c1;
+
+    CU_ASSERT(isEmpty(bufferUnitary));
     
-    buffer=buffer_init(10);
-    msg_t* msg= msg_init(parola);
-    msg_t* msg1= msg_init(parola);
+    pthread_create(&c1, NULL, &do_get_bloccante, bufferUnitary);
+ 
+    sleep(2);
     
-    pthread_t c1,p1;
+    CU_ASSERT(pthread_kill(c1, 0)==0); //il processo dorme? chiedere se effettivamente è così
+
+    pthread_mutex_lock(&bufferUnitary->bufferMutex); //effettuo l'inserimento
+    bufferUnitary->cells[0].content=contentToInsert;
+    bufferUnitary->K++;
+    pthread_cond_signal(&bufferUnitary->notEmpty);
+    pthread_mutex_unlock(&bufferUnitary->bufferMutex);
+    
+    pthread_join(c1, &msgReturnedByGet);
+    
+    CU_ASSERT(isEmpty(bufferUnitary));
+    CU_ASSERT_EQUAL(contentToInsert, msgReturnedByGet->content);    
+}
+
+void blocking_put_fullBuffer_b1(void)
+{
+  
+    int* contentToInsert=42;
+    msg_t* msgToPut= msg_init(contentToInsert);
+    bufferUnitary=buffer_init(1);
+    msg_t* msgReturnedByPut;
+    
+    pthread_t p1;
+    
+    struct arg_struct ars;
+    ars.buffer=bufferUnitary;
+    ars.msg=msgToPut;
+    
+    bufferUnitary->cells[0].content=12;
+    bufferUnitary->K++;
+    
+    CU_ASSERT(isFull(bufferUnitary));
+    
+    pthread_create(&p1, NULL, &do_put_bloccante, &ars);
+    
+    sleep(2);
+    
+    CU_ASSERT(pthread_kill(p1, 0)==0); //il processo dorme? chiedere se effettivamente è così
+    
+    pthread_mutex_lock(&bufferUnitary->bufferMutex); //effettuo l'inserimento
+    bufferUnitary->K--;
+    pthread_cond_signal(&bufferUnitary->notFull);
+    pthread_mutex_unlock(&bufferUnitary->bufferMutex);
+    
+    pthread_join(p1, &msgReturnedByPut);
+    
+    CU_ASSERT(isFull(bufferUnitary));
+    CU_ASSERT_EQUAL(contentToInsert, msgReturnedByPut->content);
+    CU_ASSERT_EQUAL(contentToInsert, bufferUnitary->cells[0].content);
+}
+
+void concurrent_putandget_b1(void){
+    
+    int* contentToInsert=42;
+    
+    bufferUnitary=buffer_init(1);
+    msg_t* msgToPut= msg_init(contentToInsert);
+    
+    pthread_t c1,c2,p1,p2;
     
     struct Ntimes ars;
-    ars.buffer=buffer;
-    ars.msg=msg;
-    ars.i=5; //cambiare in 50
+    ars.buffer=bufferUnitary;
+    ars.msg=msgToPut;
+    ars.i=5; //ciascun produttore produce 5 volte e ciascun consumatore consuma 5 volte
     
+   
     pthread_create(&p1, NULL, &put_blocking_Ntimes, &ars);
+    pthread_create(&p2, NULL, &put_blocking_Ntimes, &ars);
     pthread_create(&c1, NULL, &get_blocking_Ntimes, &ars);
-    pthread_join(p1, &msg);
-    pthread_join(c1, &msg1);
-    CU_ASSERT( 0 == buffer->K);
-    CU_ASSERT_STRING_EQUAL("hello", msg->content);
-    CU_ASSERT_STRING_EQUAL("hello", msg1->content);
-    
+    pthread_create(&c2, NULL, &get_blocking_Ntimes, &ars);
+
+    pthread_join(p1, NULL);
+    pthread_join(p2, NULL);
+    pthread_join(c1, NULL);
+    pthread_join(c2, NULL);
+
+    CU_ASSERT(isEmpty(bufferUnitary));
+
     
 }
+
+
 

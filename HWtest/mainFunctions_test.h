@@ -11,8 +11,8 @@
 
 #include "notBlocking_test.h"
 
-int init_suite1(void);
-int clean_suite1(void);
+int init_suiteBasic(void);
+int clean_suiteBasic(void);
 void testBufferInit(void);
 void testPut(void);
 void testGet(void);

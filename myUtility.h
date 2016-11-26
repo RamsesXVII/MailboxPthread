@@ -41,6 +41,30 @@ void put_notBlocking_Ntimes(void* arguments);
 
 
 
+/*  NON CANCELLARE
+ char* parola="hello";
+ 
+ bufferUnitary=buffer_init(10);
+ msg_t* msg= msg_init(parola);
+ msg_t* msg1= msg_init(parola);
+ 
+ pthread_t c1,p1;
+ 
+ struct Ntimes ars;
+ ars.buffer=bufferUnitary;
+ ars.msg=msg;
+ ars.i=5; //cambiare in 50
+ 
+ pthread_create(&p1, NULL, &put_blocking_Ntimes, &ars);
+ pthread_create(&c1, NULL, &get_blocking_Ntimes, &ars);
+ pthread_join(p1, &msg);
+ pthread_join(c1, &msg1);
+ CU_ASSERT( 0 == bufferUnitary->K);
+ CU_ASSERT_STRING_EQUAL("hello", msg->content);
+ CU_ASSERT_STRING_EQUAL("hello", msg1->content); */
+
+
+
 
 
 #endif /* utility_h */

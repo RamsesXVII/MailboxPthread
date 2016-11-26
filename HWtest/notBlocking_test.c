@@ -8,16 +8,22 @@
 
 #include "notBlocking_test.h"
 
-int init_suite3(void)
+int init_suiteTestNotBlocking(void)
 {
-    buffer=buffer_init(1);
-    return 0;
+    bufferUnitary=buffer_init(1);
+    bufferNotUnitary=buffer_init(5);
+    if(bufferUnitary!=NULL && bufferNotUnitary!=NULL)
+        return 0;
+    
+    else return 1;
+    
     
 }
 
-int clean_suite3(void)
+int clean_suiteTestNotBlocking(void)
 {
-    buffer_destroy(buffer);
+    buffer_destroy(bufferUnitary);
+    buffer_destroy(bufferNotUnitary);
     return 0;
 }
 
@@ -34,20 +40,20 @@ void testNotBlocking(void)
     pthread_t c1,p1;
 
     struct arg_struct ars;
-    ars.buffer=buffer;
+    ars.buffer=bufferUnitary;
     ars.msg=msg;
     
-    CU_ASSERT( 0 == buffer->K);
-    pthread_create(&c1, NULL, &do_get_non_bloccante, buffer);
+    CU_ASSERT( 0 == bufferUnitary->K);
+    pthread_create(&c1, NULL, &do_get_non_bloccante, bufferUnitary);
     pthread_join(c1, &msg1);
     CU_ASSERT_EQUAL(msg1, BUFFER_ERROR);
     CU_ASSERT_PTR_NULL(msg1);
-    CU_ASSERT( 0 == buffer->K);
-    CU_ASSERT( 0 == buffer->D);
+    CU_ASSERT( 0 == bufferUnitary->K);
+    CU_ASSERT( 0 == bufferUnitary->D);
     
     pthread_create(&p1, NULL, &do_put_non_bloccante, &ars);
     pthread_join(p1, NULL);
-    CU_ASSERT( 1 == buffer->K);
+    CU_ASSERT( 1 == bufferUnitary->K);
     
     
 }
@@ -57,14 +63,14 @@ void test_notBlocking_MailBox(void)
 {
     char* parola="hello";
     
-    buffer=buffer_init(5);
+    bufferUnitary=buffer_init(5);
     msg_t* msg= msg_init(parola);
     msg_t* msg1= NULL;
     
     pthread_t c1,p1;
     
     struct Ntimes ars;
-    ars.buffer=buffer;
+    ars.buffer=bufferUnitary;
     ars.msg=msg;
     ars.i=20; //cambiare in 50
     

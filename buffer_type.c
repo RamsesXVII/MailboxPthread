@@ -22,7 +22,7 @@ buffer_t* buffer_init(unsigned int maxsize){
     buffer->buffer_init = buffer_init;
     buffer->buffer_destroy=buffer_destroy;
     
-    pthread_mutex_init(&(buffer->bufferMutex), NULL);; // mutex che gestisce corse critiche su var.cond.
+    pthread_mutex_init(&(buffer->bufferMutex), NULL); // mutex che gestisce corse critiche su var.cond.
     pthread_cond_init(&(buffer->notFull), NULL);		/* Initialize consumer condition variable */
     pthread_cond_init(&(buffer->notEmpty), NULL);		/* Initialize consumer condition variable */
     

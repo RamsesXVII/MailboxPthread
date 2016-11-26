@@ -13,7 +13,7 @@
 void printThreadId(){
     pthread_t self_id;
     self_id=pthread_self();
-    printf("Hello from %d thread.\n",self_id);
+    printf("Hello from %d thread.\n",(int)self_id);
 }
 
 void printPutCompleted(){
@@ -32,7 +32,7 @@ void printStars(){
 }
 
 void printK(int i){
-    printf("%d%",i);
+    printf("%d",i);
 }
 
 
