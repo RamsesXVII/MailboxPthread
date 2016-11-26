@@ -10,7 +10,11 @@
 #define buffer_type_h
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
 #include "message_type.h"
+
 
 #define BUFFER_ERROR (msg_t*) NULL
 

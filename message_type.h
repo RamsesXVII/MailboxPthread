@@ -9,6 +9,8 @@
 #ifndef message_type_h
 #define message_type_h
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <stdio.h>
 
 

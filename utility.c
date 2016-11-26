@@ -6,11 +6,7 @@
 //  Copyright © 2016 Mattia Iodice. All rights reserved.
 //
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <unistd.h>
-#include "buffer_type.h"
+
 #include "utility.h"
 
 

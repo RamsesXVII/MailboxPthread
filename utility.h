@@ -9,7 +9,8 @@
 #ifndef utility_h
 #define utility_h
 
-#include <stdio.h>
+#include "buffer_type.h"
+
 
 /*Per passare più parametri ad una funzione di un thread*/
 struct arg_struct{

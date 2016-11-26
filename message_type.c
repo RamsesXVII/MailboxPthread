@@ -7,8 +7,7 @@
 //
 
 //TODO controllare bene di non aver sbagliato msg_init
-#include <stdlib.h>
-#include <stdio.h>
+
 
 #include "message_type.h"
 

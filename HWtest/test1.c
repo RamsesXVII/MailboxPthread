@@ -160,7 +160,7 @@ void testMailBox(void)
     struct Ntimes ars;
     ars.buffer=buffer;
     ars.msg=msg;
-    ars.i=50;
+    ars.i=5; //cambiare in 50
     
     pthread_create(&p1, NULL, &put_blocking_Ntimes, &ars);
     pthread_create(&c1, NULL, &get_blocking_Ntimes, &ars);
