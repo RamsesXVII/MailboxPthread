@@ -37,18 +37,19 @@ int main()
     }
     
     if ((NULL == CU_add_test(pSuite_blocking, "test of put and get with N=1", testThread))||
-        (NULL == CU_add_test(pSuite_blocking, "test of get", testMailBox)))
+        (NULL == CU_add_test(pSuite_blocking, "test of esecution of mailbox problem", testMailBox)))
     {
         CU_cleanup_registry();
         return CU_get_error();
     }
     
-    if ((NULL == CU_add_test(pSuite_not_blocking, "test of not blocking functions", testNotBlocking)))
+    if ((NULL == CU_add_test(pSuite_not_blocking, "test of not blocking functions", testNotBlocking))||
+        (NULL == CU_add_test(pSuite_not_blocking, "test of esecution of mailbox problem", test_notBlocking_MailBox)))
     {
         CU_cleanup_registry();
         return CU_get_error();
     }
-    
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

@@ -15,6 +15,8 @@
 int init_suite3(void);
 int clean_suite3(void);
 void testNotBlocking(void);
+void test_notBlocking_MailBox(void);
+
 
 
 

@@ -98,8 +98,8 @@
 			isa = PBXGroup;
 			children = (
 				334034FB1DE8D1AF008FC3FC /* Automated.h */,
-				334034FC1DE8D1AF008FC3FC /* Basic.h */,
 				334034FD1DE8D1AF008FC3FC /* Console.h */,
+				334034FC1DE8D1AF008FC3FC /* Basic.h */,
 				334034FE1DE8D1AF008FC3FC /* CUCurses.h */,
 				334034FF1DE8D1AF008FC3FC /* CUError.h */,
 				334035001DE8D1AF008FC3FC /* CUnit.h */,

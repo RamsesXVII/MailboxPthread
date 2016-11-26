@@ -50,3 +50,29 @@ void testNotBlocking(void)
     
     
 }
+
+
+void test_notBlocking_MailBox(void)
+{
+    char* parola="hello";
+    
+    buffer=buffer_init(5);
+    msg_t* msg= msg_init(parola);
+    msg_t* msg1= NULL;
+    
+    pthread_t c1,p1;
+    
+    struct Ntimes ars;
+    ars.buffer=buffer;
+    ars.msg=msg;
+    ars.i=20; //cambiare in 50
+    
+    pthread_create(&p1, NULL, &put_notBlocking_Ntimes, &ars);
+    pthread_create(&c1, NULL, &get_notBlocking_Ntimes, &ars);
+    pthread_join(p1, &msg1);
+    pthread_join(c1, &msg1);
+/* su questa esecuzione di test non si possono fare assunzioni, ma è interessante stampare il numero di messaggi 
+ *del buffer e vedere la loro evoluzione*/
+    
+    
+}

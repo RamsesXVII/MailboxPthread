@@ -41,7 +41,6 @@ msg_t* put_non_bloccante(buffer_t* buffer, msg_t* msg){
     int buffer_size=buffer->size;
     msg_t* new_msg=msg;
 
-    printf("%d",buffer->K);
     if (buffer->K == buffer_size)
         new_msg=BUFFER_ERROR;
     
@@ -51,15 +50,14 @@ msg_t* put_non_bloccante(buffer_t* buffer, msg_t* msg){
         buffer->cells[d_pos]=*new_msg;
         buffer->D=(d_pos+1)%((buffer->size));
         buffer->K++;
-        
-        printK(buffer->K);
-
     }
     
+    printK(buffer->K);
+
     pthread_cond_signal(&buffer->notEmpty);
     pthread_mutex_unlock(&buffer->bufferMutex);
     
-    return  new_msg;
+    return  new_msg; 
 }
 
 msg_t* get_non_bloccante(buffer_t* buffer){
@@ -67,18 +65,18 @@ msg_t* get_non_bloccante(buffer_t* buffer){
     pthread_mutex_lock(&buffer->bufferMutex);
     msg_t* msg=NULL;
     
-    if(buffer->K == 0)
-        msg=BUFFER_ERROR;
+    if(buffer->K == 0){
+        msg=BUFFER_ERROR;}
     
     else{
         int t_pos=buffer->T;
         msg=&buffer->cells[t_pos];
         buffer->T = (t_pos+1)%((buffer->size));
-        buffer->K++;
+        buffer->K--;
         
-        printK(buffer->K);
-
     }
+    printK(buffer->K);
+    
     pthread_cond_signal(&buffer->notFull);
     pthread_mutex_unlock(&buffer->bufferMutex);
     
@@ -100,9 +98,6 @@ msg_t* put_bloccante(buffer_t* buffer, msg_t* msg){
     buffer->D=(d_pos+1)%((buffer->size));
     buffer->K++;
     
-    printK(buffer->K);
-
-    
     pthread_cond_signal(&buffer->notEmpty);
     pthread_mutex_unlock(&buffer->bufferMutex);
     
@@ -120,8 +115,6 @@ msg_t* get_bloccante(buffer_t* buffer){
     msg=&buffer->cells[t_pos];
     buffer->T = (t_pos+1)%((buffer->size));
     buffer->K--;
-    
-    printK(buffer->K);
     
     pthread_cond_signal(&buffer->notFull);
     pthread_mutex_unlock(&buffer->bufferMutex);
