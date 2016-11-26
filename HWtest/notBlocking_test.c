@@ -32,7 +32,7 @@ void testNotBlocking(void)
     msg_t* msg1= msg_init(parola);
     
     pthread_t c1,p1;
-    
+
     struct arg_struct ars;
     ars.buffer=buffer;
     ars.msg=msg;
