@@ -2,6 +2,6 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:HWtest.xcodeproj">
+      location = "self:/Users/mattiaiodice/Google Drive/workspace PC/HWtest/HWC1.xcodeproj">
    </FileRef>
 </Workspace>

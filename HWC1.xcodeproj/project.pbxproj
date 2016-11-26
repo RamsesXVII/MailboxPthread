@@ -50,7 +50,7 @@
 		33BF51841DE970A5004D63B8 /* notBlocking_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notBlocking_test.h; sourceTree = "<group>"; };
 		33BF51861DE9721B004D63B8 /* mainFunctions_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mainFunctions_test.c; sourceTree = "<group>"; };
 		33BF51871DE9721B004D63B8 /* mainFunctions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mainFunctions_test.h; sourceTree = "<group>"; };
-		33D8FA9A1DE455E3000D6753 /* HWtest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HWtest; sourceTree = BUILT_PRODUCTS_DIR; };
+		33D8FA9A1DE455E3000D6753 /* HWC1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HWC1; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,7 +89,7 @@
 		33D8FA9B1DE455E3000D6753 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				33D8FA9A1DE455E3000D6753 /* HWtest */,
+				33D8FA9A1DE455E3000D6753 /* HWC1 */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -119,9 +119,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		33D8FA991DE455E3000D6753 /* HWtest */ = {
+		33D8FA991DE455E3000D6753 /* HWC1 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 33D8FAA11DE455E3000D6753 /* Build configuration list for PBXNativeTarget "HWtest" */;
+			buildConfigurationList = 33D8FAA11DE455E3000D6753 /* Build configuration list for PBXNativeTarget "HWC1" */;
 			buildPhases = (
 				33D8FA961DE455E3000D6753 /* Sources */,
 				33D8FA971DE455E3000D6753 /* Frameworks */,
@@ -131,9 +131,9 @@
 			);
 			dependencies = (
 			);
-			name = HWtest;
+			name = HWC1;
 			productName = HWtest;
-			productReference = 33D8FA9A1DE455E3000D6753 /* HWtest */;
+			productReference = 33D8FA9A1DE455E3000D6753 /* HWC1 */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -150,7 +150,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 33D8FA951DE455E3000D6753 /* Build configuration list for PBXProject "HWtest" */;
+			buildConfigurationList = 33D8FA951DE455E3000D6753 /* Build configuration list for PBXProject "HWC1" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -162,7 +162,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				33D8FA991DE455E3000D6753 /* HWtest */,
+				33D8FA991DE455E3000D6753 /* HWC1 */,
 			);
 		};
 /* End PBXProject section */
@@ -276,7 +276,7 @@
 					"-lncurses",
 					"-lcunit",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = HWC1;
 			};
 			name = Debug;
 		};
@@ -292,14 +292,14 @@
 					"-lncurses",
 					"-lcunit",
 				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = HWC1;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		33D8FA951DE455E3000D6753 /* Build configuration list for PBXProject "HWtest" */ = {
+		33D8FA951DE455E3000D6753 /* Build configuration list for PBXProject "HWC1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33D8FA9F1DE455E3000D6753 /* Debug */,
@@ -308,7 +308,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		33D8FAA11DE455E3000D6753 /* Build configuration list for PBXNativeTarget "HWtest" */ = {
+		33D8FAA11DE455E3000D6753 /* Build configuration list for PBXNativeTarget "HWC1" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				33D8FAA21DE455E3000D6753 /* Debug */,

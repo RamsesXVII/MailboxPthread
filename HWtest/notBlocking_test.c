@@ -40,6 +40,7 @@ void testNotBlocking(void)
     CU_ASSERT( 0 == buffer->K);
     pthread_create(&c1, NULL, &do_get_non_bloccante, buffer);
     pthread_join(c1, &msg1);
+    CU_ASSERT_EQUAL(msg1, BUFFER_ERROR);
     CU_ASSERT_PTR_NULL(msg1);
     CU_ASSERT( 0 == buffer->K);
     CU_ASSERT( 0 == buffer->D);
