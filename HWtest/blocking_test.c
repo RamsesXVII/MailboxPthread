@@ -164,6 +164,41 @@ void concurrent_putandget_b1(void){
     pthread_join(c2, NULL);
 
     CU_ASSERT(isEmpty(bufferUnitary));
+    
+    /* se per concorrente si intende senza loop va bene questo
+     int* contentToInsert=42;
+     
+     bufferUnitary=buffer_init(1);
+     msg_t* msgToPut= msg_init(contentToInsert);
+     
+     pthread_t c1,c2,c3,c4,p1,p2,p3,p4;
+     
+     struct arg_struct ars;
+     ars.buffer=bufferUnitary;
+     ars.msg=msgToPut;
+     
+     
+     pthread_create(&c1, NULL, &do_get_bloccante, bufferUnitary);
+     pthread_create(&c2, NULL, &do_get_bloccante, bufferUnitary);
+     pthread_create(&c3, NULL, &do_get_bloccante, bufferUnitary);
+     pthread_create(&c4, NULL, &do_get_bloccante, bufferUnitary);
+     
+     pthread_create(&p1, NULL, &do_put_bloccante, &ars);
+     pthread_create(&p2, NULL, &do_put_bloccante, &ars);
+     pthread_create(&p3, NULL, &do_put_bloccante, &ars);
+     pthread_create(&p4, NULL, &do_put_bloccante, &ars);
+     
+     
+     pthread_join(p1, NULL);
+     pthread_join(p2, NULL);
+     pthread_join(p3, NULL);
+     pthread_join(p4, NULL);
+     pthread_join(c1, NULL);
+     pthread_join(c2, NULL);
+     pthread_join(c3, NULL);
+     pthread_join(c4, NULL);
+     
+     CU_ASSERT(isEmpty(bufferUnitary)); */
 
     
 }
