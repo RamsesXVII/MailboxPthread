@@ -28,6 +28,7 @@ void blocking_get_not_emptyBuffer_b1(void);
 void blocking_get_emptyBuffer_b1(void);
 void blocking_put_fullBuffer_b1(void);
 void concurrent_putandget_b1(void);
+void sequential_putandget_bN(void);
 
 
 

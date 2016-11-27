@@ -37,11 +37,12 @@ int main()
     }
     
     
-    if ((NULL == CU_add_test(pSuite_blocking, "test of a blocking put into an empty buffer. Unitary buffer. ", blocking_put_emptyBuffer_b1))||
-        (NULL == CU_add_test(pSuite_blocking, "test of a blocking get from a not empty buffer. Unitary buffer.", blocking_get_not_emptyBuffer_b1))||
-        (NULL == CU_add_test(pSuite_blocking, "test of a blocking get from an empty buffer. Unitary buffer.", blocking_get_emptyBuffer_b1))||
-        (NULL == CU_add_test(pSuite_blocking, "test of a blocking put into a full buffer. Unitary buffer.", blocking_put_fullBuffer_b1))||
-        (NULL == CU_add_test(pSuite_blocking, "test of concurrents insertions and takings from a buffer. Unitary buffer.", concurrent_putandget_b1)))
+    if ((NULL == CU_add_test(pSuite_blocking, "test of a blocking put into an empty buffer. Unitary buffer. ",blocking_put_emptyBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of a blocking get from a not empty buffer. Unitary buffer.",blocking_get_not_emptyBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of a blocking get from an empty buffer. Unitary buffer.",blocking_get_emptyBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of a blocking put into a full buffer. Unitary buffer.",blocking_put_fullBuffer_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of concurrent puts and gets from a buffer. Unitary buffer.",concurrent_putandget_b1))||
+        (NULL == CU_add_test(pSuite_blocking, "test of sequential puts and gets from a buffer that becomes full.Not unitary buffer.",sequential_putandget_bN)))
     {
         CU_cleanup_registry();
         return CU_get_error();
