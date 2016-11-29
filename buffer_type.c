@@ -66,8 +66,6 @@ msg_t* put_non_bloccante(buffer_t* buffer, msg_t* msg){
         buffer->K++;
     }
     
-    printK(buffer->K);
-
     pthread_cond_signal(&buffer->notEmpty);
     pthread_mutex_unlock(&buffer->bufferMutex);
     
@@ -88,7 +86,6 @@ msg_t* get_non_bloccante(buffer_t* buffer){
         buffer->K--;
         
     }
-    printK(buffer->K);
     
     pthread_cond_signal(&buffer->notFull);
     pthread_mutex_unlock(&buffer->bufferMutex);

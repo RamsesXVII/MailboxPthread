@@ -28,39 +28,179 @@ int clean_suiteTestNotBlocking(void)
 }
 
 
-
-void testNotBlocking(void)
+void notBlocking_put_emptyBuffer_b1(void)
 {
+ 
+    int* contentToInsert=42;
     
-    char* parola="hello";
+    msg_t* msgToPut= msg_init(contentToInsert);
+    msg_t* msgReturnedByPut=NULL;
     
-    msg_t* msg= msg_init(parola);
-    msg_t* msg1= msg_init(parola);
-    
-    pthread_t c1,p1;
+    pthread_t p1;
 
-    struct arg_struct ars;
-    ars.buffer=bufferUnitary;
-    ars.msg=msg;
+    struct arg_struct parameters;
+    parameters.buffer=bufferUnitary;
+    parameters.msg=msgToPut;
     
-    CU_ASSERT( 0 == bufferUnitary->K);
-    pthread_create(&c1, NULL, &do_get_non_bloccante, bufferUnitary);
-    pthread_join(c1, &msg1);
-    CU_ASSERT_EQUAL(msg1, BUFFER_ERROR);
-    CU_ASSERT_PTR_NULL(msg1);
-    CU_ASSERT( 0 == bufferUnitary->K);
+    CU_ASSERT( isEmpty(bufferUnitary));
+    pthread_create(&p1, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p1, &msgReturnedByPut);
+    CU_ASSERT_EQUAL(msgReturnedByPut->content, contentToInsert);
+    CU_ASSERT( 1 == bufferUnitary->K);
     CU_ASSERT( 0 == bufferUnitary->D);
     
-    pthread_create(&p1, NULL, &do_put_non_bloccante, &ars);
-    pthread_join(p1, NULL);
-    CU_ASSERT( 1 == bufferUnitary->K);
+// pthread_create(&p1, NULL, &do_put_non_bloccante, &ars);
+ //   pthread_join(p1, NULL);
+  //  CU_ASSERT( 1 == bufferUnitary->K);
     
+    
+}
+
+void notBlocking_get_not_emptyBuffer_b1(void){
+    msg_t* msgReturnedByGet= NULL;
+    
+    pthread_t c1;
+    
+    CU_ASSERT(1 == bufferUnitary->K);
+    CU_ASSERT(isFull(bufferUnitary));
+    
+    pthread_create(&c1, NULL, &do_get_non_bloccante, bufferUnitary);
+    pthread_join(c1, &msgReturnedByGet);
+    
+    CU_ASSERT(isEmpty(bufferUnitary));
+    CU_ASSERT_EQUAL(42,(int) msgReturnedByGet->content);
+    CU_ASSERT(0 == bufferUnitary->T);
+    CU_ASSERT(0 == bufferUnitary->D);
+}
+
+void notBlocking_get_emptyBuffer_b1(void){
+    char* notNullcontent="not null";
+    msg_t* msgReturnedByGet= msg_init(notNullcontent);
+    bufferUnitary=buffer_init(1);
+    
+    pthread_t c1;
+    
+    CU_ASSERT(isEmpty(bufferUnitary));
+    
+    pthread_create(&c1, NULL, &do_get_non_bloccante, bufferUnitary);
+    pthread_join(c1, &msgReturnedByGet);
+    
+    CU_ASSERT(isEmpty(bufferUnitary));
+    CU_ASSERT_EQUAL(msgReturnedByGet,BUFFER_ERROR);
+    CU_ASSERT(0 == bufferUnitary->T);
+    CU_ASSERT(0 == bufferUnitary->D);
+    
+}
+
+void notBlocking_put_fullBuffer_b1(void){
+    int* contentToInsert=42;
+    msg_t* msgToPut= msg_init(contentToInsert);
+    bufferUnitary=buffer_init(1);
+    msg_t* msgReturnedByPut=msgToPut; //notNull
+    
+    pthread_t p1;
+    
+    struct arg_struct parameters;
+    parameters.buffer=bufferUnitary;
+    parameters.msg=msgToPut;
+    
+    bufferUnitary->cells[0].content=12;
+    bufferUnitary->K++;
+    
+    CU_ASSERT(isFull(bufferUnitary));
+    
+    pthread_create(&p1, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p1, &msgReturnedByPut);
+    
+    CU_ASSERT(isFull(bufferUnitary));
+    CU_ASSERT_EQUAL(BUFFER_ERROR, msgReturnedByPut);
+    
+}
+
+void notblocking_sequential_putandget_bN(void){
+    bufferNotUnitary=buffer_init(3);
+    int* contentToInsert=42;
+    msg_t* msgToPut= msg_init(contentToInsert);
+    msg_t* msgReturned=msgToPut; //not null
+    pthread_t c1,c2,c3,p1,p2,p3,p4,p5,p6;
+    
+    
+    struct arg_struct parameters;
+    parameters.buffer=bufferNotUnitary;
+    parameters.msg=msgToPut;
+    
+    CU_ASSERT(isEmpty(bufferNotUnitary));
+    
+    pthread_create(&p1, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p1, NULL);
+    CU_ASSERT(bufferNotUnitary->K==1);
+    
+    pthread_create(&p2, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p2, NULL);
+    CU_ASSERT(bufferNotUnitary->K==2);
+    
+    pthread_create(&p3, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p3, NULL);
+    CU_ASSERT(bufferNotUnitary->K==3);
+    CU_ASSERT(isFull(bufferNotUnitary))
+    
+    pthread_create(&p4, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p4, &msgReturned);
+
+    CU_ASSERT_EQUAL(msgReturned, BUFFER_ERROR);
+    CU_ASSERT(0 == bufferUnitary->T);
+    CU_ASSERT(0 == bufferUnitary->D);
+    
+    
+    pthread_create(&c1, NULL, &do_get_bloccante, bufferNotUnitary);
+    pthread_create(&c2, NULL, &do_get_bloccante, bufferNotUnitary);
+    pthread_create(&c3, NULL, &do_get_bloccante, bufferNotUnitary);
+    pthread_join(c1, NULL);
+    pthread_join(c2, NULL);
+    pthread_join(c3, NULL);
+    
+    CU_ASSERT(isEmpty(bufferNotUnitary));
+    
+    
+    
+}
+
+void notblocking_concurrent_put_bN(void){
+    bufferNotUnitary=buffer_init(3);
+    int* contentToInsert=42;
+    msg_t* msgToPut= msg_init(contentToInsert);
+    msg_t* msgReturned=msgToPut; //not null
+    pthread_t p1,p2,p3,p4;
+    
+    
+    struct arg_struct parameters;
+    parameters.buffer=bufferNotUnitary;
+    parameters.msg=msgToPut;
+    
+    CU_ASSERT(isEmpty(bufferNotUnitary));
+    
+    pthread_create(&p1, NULL, &do_put_non_bloccante, &parameters);
+    pthread_create(&p2, NULL, &do_put_non_bloccante, &parameters);
+    pthread_create(&p3, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p1, NULL);
+    pthread_join(p2, NULL);
+    pthread_join(p3, NULL);
+
+    CU_ASSERT(bufferNotUnitary->K==3);
+    CU_ASSERT(isFull(bufferNotUnitary))
+    
+    pthread_create(&p4, NULL, &do_put_non_bloccante, &parameters);
+    pthread_join(p4, &msgReturned);
+    
+    CU_ASSERT_EQUAL(msgReturned, BUFFER_ERROR);
+    CU_ASSERT(0 == bufferUnitary->T);
+    CU_ASSERT(0 == bufferUnitary->D);
     
 }
 
 
 void test_notBlocking_MailBox(void)
-{
+{/*
     char* parola="hello";
     
     bufferUnitary=buffer_init(5);

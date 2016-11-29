@@ -13,6 +13,7 @@
 
 int init_suiteBasic(void);
 int clean_suiteBasic(void);
+
 void testBufferInit(void);
 void testPut(void);
 void testGet(void);
