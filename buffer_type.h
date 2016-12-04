@@ -1,11 +1,3 @@
-//
-//  buffer_type.h
-//  HWtest
-//
-//  Created by Mattia Iodice on 22/11/16.
-//  Copyright © 2016 Mattia Iodice. All rights reserved.
-//
-
 #ifndef buffer_type_h
 #define buffer_type_h
 
@@ -15,16 +7,12 @@
 #include <unistd.h>
 #include "message_type.h"
 
-
-
 #define BUFFER_ERROR (msg_t*) NULL
 
-
-
 typedef struct buffer{
-    int T;   //indice lettura
-    int D;   //indice inserimento
-    int K;   //numero messaggi presenti
+    int T;
+    int D;
+    int K;
     int size;
     msg_t* cells;
     
@@ -33,7 +21,6 @@ typedef struct buffer{
     pthread_cond_t notEmpty;
     pthread_cond_t notFull;
     
-    /*perchè si mettono i puntatori a funzione qui dentro? per poterli richiamare come in JAVA?*/
      struct buffer* (*buffer_init)(unsigned int);
      void (*buffer_destroy)(struct buffer*);
 
@@ -58,6 +45,8 @@ void do_put_non_bloccante(void* arguments);
 
 void do_get_non_bloccante(void* arguments);
 void do_get_bloccante(void* arguments);
+
+
 
 
 #endif /* buffer_type_h */

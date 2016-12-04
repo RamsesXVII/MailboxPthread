@@ -10,10 +10,10 @@
 		3350F3331DE87DCD005ECFCB /* myUtility.c in Sources */ = {isa = PBXBuildFile; fileRef = 3350F3311DE87DCD005ECFCB /* myUtility.c */; };
 		335BAB901DE4BC2F00A6FA28 /* message_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BAB8E1DE4BC2F00A6FA28 /* message_type.c */; };
 		335BAB931DE4BC4000A6FA28 /* buffer_type.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BAB911DE4BC4000A6FA28 /* buffer_type.c */; };
-		335BAB9A1DE59EC600A6FA28 /* test1.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BAB991DE59EC600A6FA28 /* test1.c */; };
+		335BAB9A1DE59EC600A6FA28 /* mainTest.c in Sources */ = {isa = PBXBuildFile; fileRef = 335BAB991DE59EC600A6FA28 /* mainTest.c */; };
 		33BF51821DE96F2D004D63B8 /* blocking_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 33BF51801DE96F2D004D63B8 /* blocking_test.c */; };
 		33BF51851DE970A5004D63B8 /* notBlocking_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 33BF51831DE970A5004D63B8 /* notBlocking_test.c */; };
-		33BF51881DE9721B004D63B8 /* mainFunctions_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 33BF51861DE9721B004D63B8 /* mainFunctions_test.c */; };
+		33BF51881DE9721B004D63B8 /* dataStructures_test.c in Sources */ = {isa = PBXBuildFile; fileRef = 33BF51861DE9721B004D63B8 /* dataStructures_test.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -43,13 +43,13 @@
 		335BAB8F1DE4BC2F00A6FA28 /* message_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = message_type.h; sourceTree = "<group>"; };
 		335BAB911DE4BC4000A6FA28 /* buffer_type.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = buffer_type.c; sourceTree = "<group>"; };
 		335BAB921DE4BC4000A6FA28 /* buffer_type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buffer_type.h; sourceTree = "<group>"; };
-		335BAB991DE59EC600A6FA28 /* test1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test1.c; sourceTree = "<group>"; };
+		335BAB991DE59EC600A6FA28 /* mainTest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mainTest.c; sourceTree = "<group>"; };
 		33BF51801DE96F2D004D63B8 /* blocking_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = blocking_test.c; sourceTree = "<group>"; };
 		33BF51811DE96F2D004D63B8 /* blocking_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = blocking_test.h; sourceTree = "<group>"; };
 		33BF51831DE970A5004D63B8 /* notBlocking_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = notBlocking_test.c; sourceTree = "<group>"; };
 		33BF51841DE970A5004D63B8 /* notBlocking_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = notBlocking_test.h; sourceTree = "<group>"; };
-		33BF51861DE9721B004D63B8 /* mainFunctions_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mainFunctions_test.c; sourceTree = "<group>"; };
-		33BF51871DE9721B004D63B8 /* mainFunctions_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mainFunctions_test.h; sourceTree = "<group>"; };
+		33BF51861DE9721B004D63B8 /* dataStructures_test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dataStructures_test.c; sourceTree = "<group>"; };
+		33BF51871DE9721B004D63B8 /* dataStructures_test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dataStructures_test.h; sourceTree = "<group>"; };
 		33D8FA9A1DE455E3000D6753 /* HWC1 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = HWC1; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -105,9 +105,9 @@
 				334035001DE8D1AF008FC3FC /* CUnit.h */,
 				334035011DE8D1AF008FC3FC /* TestDB.h */,
 				334035021DE8D1AF008FC3FC /* TestRun.h */,
-				335BAB991DE59EC600A6FA28 /* test1.c */,
-				33BF51861DE9721B004D63B8 /* mainFunctions_test.c */,
-				33BF51871DE9721B004D63B8 /* mainFunctions_test.h */,
+				335BAB991DE59EC600A6FA28 /* mainTest.c */,
+				33BF51861DE9721B004D63B8 /* dataStructures_test.c */,
+				33BF51871DE9721B004D63B8 /* dataStructures_test.h */,
 				33BF51831DE970A5004D63B8 /* notBlocking_test.c */,
 				33BF51841DE970A5004D63B8 /* notBlocking_test.h */,
 				33BF51801DE96F2D004D63B8 /* blocking_test.c */,
@@ -173,10 +173,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				335BAB901DE4BC2F00A6FA28 /* message_type.c in Sources */,
-				335BAB9A1DE59EC600A6FA28 /* test1.c in Sources */,
+				335BAB9A1DE59EC600A6FA28 /* mainTest.c in Sources */,
 				3350F3331DE87DCD005ECFCB /* myUtility.c in Sources */,
 				33BF51821DE96F2D004D63B8 /* blocking_test.c in Sources */,
-				33BF51881DE9721B004D63B8 /* mainFunctions_test.c in Sources */,
+				33BF51881DE9721B004D63B8 /* dataStructures_test.c in Sources */,
 				33BF51851DE970A5004D63B8 /* notBlocking_test.c in Sources */,
 				335BAB931DE4BC4000A6FA28 /* buffer_type.c in Sources */,
 			);

@@ -1,15 +1,7 @@
-//
-//  mainFunctions_test.c
-//  HWtest
-//
-//  Created by Mattia Iodice on 26/11/16.
-//  Copyright © 2016 Mattia Iodice. All rights reserved.
-//
-
-#include "mainFunctions_test.h"
+#include "dataStructures_test.h"
 
 
-/* This suite tests an insertion and a getting into the buffer
+/* This suite tests a put and a get into the buffer
  * It's a single-thread excecution
  */
 int init_suiteBasic(void)
@@ -56,6 +48,7 @@ void testPut(void)
     CU_ASSERT(1 == bufferUnitary->K);
     CU_ASSERT_STRING_EQUAL("hello", bufferUnitary->cells[0].content);
     CU_ASSERT_STRING_EQUAL("hello", msg->content);
+
 }
 
 void testGet(void)

@@ -16,8 +16,6 @@ int init_suiteTestNotBlocking(void)
         return 0;
     
     else return 1;
-    
-    
 }
 
 int clean_suiteTestNotBlocking(void)
@@ -30,7 +28,6 @@ int clean_suiteTestNotBlocking(void)
 
 void notBlocking_put_emptyBuffer_b1(void)
 {
- 
     int* contentToInsert=42;
     
     msg_t* msgToPut= msg_init(contentToInsert);
@@ -48,12 +45,6 @@ void notBlocking_put_emptyBuffer_b1(void)
     CU_ASSERT_EQUAL(msgReturnedByPut->content, contentToInsert);
     CU_ASSERT( 1 == bufferUnitary->K);
     CU_ASSERT( 0 == bufferUnitary->D);
-    
-// pthread_create(&p1, NULL, &do_put_non_bloccante, &ars);
- //   pthread_join(p1, NULL);
-  //  CU_ASSERT( 1 == bufferUnitary->K);
-    
-    
 }
 
 void notBlocking_get_not_emptyBuffer_b1(void){
@@ -75,7 +66,8 @@ void notBlocking_get_not_emptyBuffer_b1(void){
 
 void notBlocking_get_emptyBuffer_b1(void){
     char* notNullcontent="not null";
-    msg_t* msgReturnedByGet= msg_init(notNullcontent);
+    msg_t* msgReturnedByGet= msg_init(notNullcontent); // mi assicuro che il messaggio su cui faro il test non è null
+   
     bufferUnitary=buffer_init(1);
     
     pthread_t c1;
@@ -96,7 +88,8 @@ void notBlocking_put_fullBuffer_b1(void){
     int* contentToInsert=42;
     msg_t* msgToPut= msg_init(contentToInsert);
     bufferUnitary=buffer_init(1);
-    msg_t* msgReturnedByPut=msgToPut; //notNull
+    
+    msg_t* msgReturnedByPut=msg_init_string("not null");
     
     pthread_t p1;
     
@@ -121,9 +114,9 @@ void notblocking_sequential_putandget_bN(void){
     bufferNotUnitary=buffer_init(3);
     int* contentToInsert=42;
     msg_t* msgToPut= msg_init(contentToInsert);
-    msg_t* msgReturned=msgToPut; //not null
-    pthread_t c1,c2,c3,p1,p2,p3,p4,p5,p6;
+    msg_t* msgReturned=msg_init_string("not null");
     
+    pthread_t c1,c2,c3,p1,p2,p3,p4,p5,p6;
     
     struct arg_struct parameters;
     parameters.buffer=bufferNotUnitary;
@@ -161,8 +154,6 @@ void notblocking_sequential_putandget_bN(void){
     
     CU_ASSERT(isEmpty(bufferNotUnitary));
     
-    
-    
 }
 
 void notblocking_concurrent_put_bN(void){
@@ -198,9 +189,9 @@ void notblocking_concurrent_put_bN(void){
     
 }
 
-
+/*
 void test_notBlocking_MailBox(void)
-{/*
+{
     char* parola="hello";
     
     bufferUnitary=buffer_init(5);
@@ -220,6 +211,6 @@ void test_notBlocking_MailBox(void)
     pthread_join(c1, &msg1);
 /* su questa esecuzione di test non si possono fare assunzioni, ma è interessante stampare il numero di messaggi 
  *del buffer e vedere la loro evoluzione*/
-    
-    
-}
+
+
+//}

@@ -37,7 +37,6 @@ void blocking_put_emptyBuffer_b1(void)
     msg_t* msgToPut= msg_init(contentToInsert);
     msg_t* msgReturnedByPut= NULL;
     
-    
     pthread_t p1;
     
     struct arg_struct parameters;
@@ -55,10 +54,29 @@ void blocking_put_emptyBuffer_b1(void)
     CU_ASSERT(0 == bufferUnitary->D);
 
     
+}
+
+
+void blocking_put_emptyBuffer_msgNull_b1(void){
+    msg_t* msgReturnedByPut= NULL;
+    
+    pthread_t p1;
+    
+    struct arg_struct para;
+    para.buffer=bufferUnitary;
+    para.msg=NULL;
+    
+    pthread_create(&p1, NULL, &do_put_bloccante, &para);
+    pthread_join(p1, &msgReturnedByPut);
+    
+    CU_ASSERT_STRING_EQUAL(msgReturnedByPut->content, "non è possibile inserire messaggi nulli");
+
     
 }
 
-void blocking_get_not_emptyBuffer_b1(void){ //va bene lasciarla come continuo del precedente metodo ?
+
+
+void blocking_get_not_emptyBuffer_b1(void){
     msg_t* msgReturnedByGet= NULL;
     
     pthread_t c1;
@@ -87,12 +105,11 @@ void blocking_get_emptyBuffer_b1(void)
     CU_ASSERT(isEmpty(bufferUnitary));
     
     pthread_create(&c1, NULL, &do_get_bloccante, bufferUnitary);
-    
+
     sleep(2);
+    CU_ASSERT(pthread_kill(c1, 0)==0);
     
-    CU_ASSERT(pthread_kill(c1, 0)==0); //il processo dorme? chiedere se effettivamente è così
-    
-    pthread_mutex_lock(&bufferUnitary->bufferMutex); //effettuo l'inserimento
+    pthread_mutex_lock(&bufferUnitary->bufferMutex);
     bufferUnitary->cells[0].content=contentToInsert;
     bufferUnitary->K++;
     pthread_cond_signal(&bufferUnitary->notEmpty);
@@ -127,7 +144,7 @@ void blocking_put_fullBuffer_b1(void)
     
     sleep(2);
     
-    CU_ASSERT(pthread_kill(p1, 0)==0); //il processo dorme? chiedere se effettivamente è così
+    CU_ASSERT(pthread_kill(p1, 0)==0);
     
     pthread_mutex_lock(&bufferUnitary->bufferMutex); //effettuo l'inserimento
     bufferUnitary->K--;
@@ -142,7 +159,7 @@ void blocking_put_fullBuffer_b1(void)
 }
 
 void blocking_concurrent_putandget_b1(void){
- /*
+ 
      int* contentToInsert=42;
      
      bufferUnitary=buffer_init(1);
@@ -164,10 +181,10 @@ void blocking_concurrent_putandget_b1(void){
      pthread_join(p1, NULL);
      pthread_join(p2, NULL);
      pthread_join(c1, NULL);
-     pthread_join(c2, NULL);*/
+     pthread_join(c2, NULL);
      
     
-     /* se per concorrente si intende senza loop va bene questo */
+     /* è probabile che con questa eseczione le sequenze di interleaving siano quelle che ci si aspetta con maggiore prrobabilità
     int* contentToInsert=42;
     
     bufferUnitary=buffer_init(1);
@@ -198,7 +215,7 @@ void blocking_concurrent_putandget_b1(void){
     pthread_join(c1, NULL);
     pthread_join(c2, NULL);
     pthread_join(c3, NULL);
-    pthread_join(c4, NULL);
+    pthread_join(c4, NULL); */
     
     CU_ASSERT(isEmpty(bufferUnitary));
 }
@@ -269,8 +286,6 @@ void blocking_concurrent_putandget_bN(void){
     
     CU_ASSERT(isEmpty(bufferNotUnitary));
     
-    //è importante chi metto prima e chi dopo? sull hw di fare distinzione
-    
     pthread_create(&c1, NULL, &do_get_bloccante, bufferNotUnitary);
     pthread_create(&p1, NULL, &do_put_bloccante, &parameters);
     pthread_join(p1, NULL);
@@ -300,9 +315,65 @@ void blocking_concurrent_putandget_bN(void){
     CU_ASSERT(bufferNotUnitary->T==0);
     CU_ASSERT(bufferNotUnitary->D==0);
     
-    
-    
 }
 
+
+void blocking_put_fullBuffer_b1_TestSupport(void)
+{
+    bufferUnitary=buffer_init(1);
+    
+    pthread_mutex_t sleepingMutex;
+    pthread_cond_t isSleeping;
+    pthread_cond_t isAwake;
+    int* sleepState;
+    
+    pthread_mutex_init(&sleepingMutex, NULL);
+    pthread_cond_init(&isSleeping, NULL);
+    pthread_cond_init(&isAwake, NULL);
+    
+    *sleepState=0; //non sta dormendo
+    
+    int* contentToInsert=42;
+    msg_t* msgToPut= msg_init(contentToInsert);
+    msg_t* msgReturnedByPut=NULL;
+    
+    pthread_t p1;
+    
+    struct arg_structTest parameters;
+    parameters.buffer=bufferUnitary;
+    parameters.msg=msgToPut;
+    parameters.sleepingMutex=&sleepingMutex;
+    parameters.sleepState=sleepState;
+    parameters.isSleeping=&isSleeping;
+    parameters.isAwake=&isAwake;
+    
+    bufferUnitary->cells[0].content=12; //riempio il buffer
+    bufferUnitary->K++;
+    
+    CU_ASSERT(isFull(bufferUnitary)); //il buffer è pieno
+    
+    pthread_create(&p1, NULL, &do_put_bloccante_TestSupport, &parameters);
+    
+    pthread_mutex_lock(&sleepingMutex);
+    while(*sleepState!=1)
+        pthread_cond_wait(&isSleeping, &sleepingMutex); //attendo che il thread effettui la wait e si addormenti
+    pthread_mutex_unlock(&sleepingMutex);
+    
+    sleep(2);
+    
+    CU_ASSERT(*sleepState==1)
+    
+    pthread_mutex_lock(&bufferUnitary->bufferMutex); //effettuo il prelievo
+    bufferUnitary->K--;
+    pthread_cond_signal(&bufferUnitary->notFull);
+    pthread_mutex_unlock(&bufferUnitary->bufferMutex);
+    
+    pthread_join(p1, &msgReturnedByPut);
+    
+    CU_ASSERT(*sleepState==0); //il thread non sta più dormendo
+    CU_ASSERT(isFull(bufferUnitary));
+    CU_ASSERT_EQUAL(contentToInsert, msgReturnedByPut->content);
+    CU_ASSERT_EQUAL(contentToInsert, bufferUnitary->cells[0].content);
+}
 
 

@@ -1,11 +1,3 @@
-//
-//  blocking_test.h
-//  HWtest
-//
-//  Created by Mattia Iodice on 26/11/16.
-//  Copyright © 2016 Mattia Iodice. All rights reserved.
-//
-
 #ifndef blocking_test_h
 #define blocking_test_h
 
@@ -19,7 +11,6 @@ static buffer_t* bufferUnitary;
 static buffer_t* bufferNotUnitary;
 
 
-
 int init_suiteTestBlocking(void);
 int clean_suiteTestBlocking(void);
 
@@ -30,8 +21,10 @@ void blocking_put_fullBuffer_b1(void);
 void blocking_concurrent_putandget_b1(void);
 void blocking_sequential_putandget_bN(void);
 void blocking_concurrent_putandget_bN(void);
+void blocking_put_emptyBuffer_msgNull_b1(void);
 
 
+void blocking_put_fullBuffer_b1_TestSupport(void);
 
 
 

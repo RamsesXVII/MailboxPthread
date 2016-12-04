@@ -1,11 +1,3 @@
-//
-//  buffer_type.c
-//  HWtest
-//
-//  Created by Mattia Iodice on 22/11/16.
-//  Copyright © 2016 Mattia Iodice. All rights reserved.
-//
-
 #include "buffer_type.h"
 #include "myUtility.h"
 
@@ -22,9 +14,9 @@ buffer_t* buffer_init(unsigned int maxsize){
     buffer->buffer_init = buffer_init;
     buffer->buffer_destroy=buffer_destroy;
     
-    pthread_mutex_init(&(buffer->bufferMutex), NULL); // mutex che gestisce corse critiche su var.cond.
-    pthread_cond_init(&(buffer->notFull), NULL);		/* Initialize consumer condition variable */
-    pthread_cond_init(&(buffer->notEmpty), NULL);		/* Initialize consumer condition variable */
+    pthread_mutex_init(&(buffer->bufferMutex), NULL);
+    pthread_cond_init(&(buffer->notFull), NULL);
+    pthread_cond_init(&(buffer->notEmpty), NULL);
     
     return buffer;
 }
@@ -44,17 +36,19 @@ int isFull(buffer_t* buffer){
 }
 
 void buffer_destroy(buffer_t* buffer){
-    pthread_mutex_destroy(&buffer->bufferMutex);	/* Free up the_mutex */
-    pthread_cond_destroy(&buffer->notFull);		    /* Free up consumer condition variable */
-    pthread_cond_destroy(&buffer->notEmpty);		/* Free up producer condition variable */
+    pthread_mutex_destroy(&buffer->bufferMutex);
+    pthread_cond_destroy(&buffer->notFull);
+    pthread_cond_destroy(&buffer->notEmpty);
     free(buffer->cells);
     free(buffer);
 }
 
+
 msg_t* put_non_bloccante(buffer_t* buffer, msg_t* msg){
-    msg_t* new_msg=msg;
 
     pthread_mutex_lock(&buffer->bufferMutex);
+    msg_t* new_msg=msg;
+    
     if (isFull(buffer))
         new_msg=BUFFER_ERROR;
     
@@ -63,11 +57,10 @@ msg_t* put_non_bloccante(buffer_t* buffer, msg_t* msg){
         
         buffer->cells[d_pos]=*new_msg;
         buffer->D=(d_pos+1)%((buffer->size));
-        buffer->K++;
-    }
+        buffer->K++;}
     
     pthread_cond_signal(&buffer->notEmpty);
-    pthread_mutex_unlock(&buffer->bufferMutex);
+        pthread_mutex_unlock(&buffer->bufferMutex);
     
     return  new_msg; 
 }
@@ -94,7 +87,7 @@ msg_t* get_non_bloccante(buffer_t* buffer){
 }
 
 msg_t* put_bloccante(buffer_t* buffer, msg_t* msg){
-    
+ 
     pthread_mutex_lock(&buffer->bufferMutex);
     while(isFull(buffer))
         pthread_cond_wait(&buffer->notFull, &buffer->bufferMutex);
@@ -132,16 +125,30 @@ msg_t* get_bloccante(buffer_t* buffer){
 
 void do_put_bloccante(void* arguments){
     struct arg_struct *args=arguments;
-    msg_t* msg=put_bloccante(args->buffer, args->msg);
-    pthread_exit(msg);
+    
+    if(args->msg!=NULL){
+        msg_t* msg=put_bloccante(args->buffer, args->msg);
+        pthread_exit(msg);}
+    
+    else{
+        msg_t* msg=msg_init("non è possibile inserire messaggi nulli");
+        pthread_exit(msg);}
 }
 
 void do_put_non_bloccante(void* arguments){
     struct arg_struct *args=arguments;
-    msg_t* msg=put_non_bloccante(args->buffer, args->msg);
-    pthread_exit(msg);}
+    
+    if(args->msg!=NULL){
+        msg_t* msg=put_non_bloccante(args->buffer, args->msg);
+        pthread_exit(msg);}
+    
+    else{
+        msg_t* msg=msg_init("non è possibile inserire messaggi nulli");
+        pthread_exit(msg);}
+}
 
 void do_get_bloccante(void* arguments){
+
     buffer_t* buffer=arguments;
     msg_t* msg=get_bloccante(buffer);
     pthread_exit(msg);
@@ -152,6 +159,7 @@ void do_get_non_bloccante(void* arguments){
     msg_t* msg=get_non_bloccante(buffer);
     pthread_exit(msg);
 }
+
 
 
 

@@ -1,43 +1,5 @@
-//
-//  utility.c
-//  HWtest
-//
-//  Created by Mattia Iodice on 25/11/16.
-//  Copyright © 2016 Mattia Iodice. All rights reserved.
-//
-
-
 #include "myUtility.h"
 
-
-void printThreadId(){
-    pthread_t self_id;
-    self_id=pthread_self();
-    printf("Hello from %d thread.\n",(int)self_id);
-}
-
-void printPutCompleted(){
-    printThreadId();
-    printf("Ho inserito\n");
-    
-}
-void printGetCompleted(){
-    printThreadId();
-    printf("Ho prelevato\n");
-}
-
-void printStars(){
-    printf("*****************\n");
-    
-}
-
-void printK(int i){
-    printf("%d",i);
-}
-
-
-/*se non metto gli sleep uno scrive tutto quello che può poi l'altro scrive tutto quello che può*/
- 
 void get_blocking_Ntimes(void* arguments){
     int i;
     int k;
@@ -95,7 +57,53 @@ void put_notBlocking_Ntimes(void* arguments){
         msg=put_non_bloccante(args->buffer,args->msg);
         if (k==0)
             sleep(2);
-        //se qui si facesse una stampa della dimensione si potrebbero apprezzare fenomeni di interferenza
     }
     pthread_exit(msg);
+
 }
+
+
+msg_t* put_bloccante_TestSupport(buffer_t* buffer, msg_t* msg,
+                                 pthread_cond_t*sleepingMutex, pthread_cond_t* isAwake, pthread_cond_t* isSleeping, int* sleepState){
+    
+    pthread_mutex_lock(&buffer->bufferMutex);
+    while(isFull(buffer)){
+        iamgoingtosleep(sleepingMutex,isSleeping,sleepState);
+        pthread_cond_wait(&buffer->notFull, &buffer->bufferMutex);
+    }
+    iamAwake(sleepingMutex,isAwake,sleepState);
+    int d_pos = buffer->D;
+    
+    msg_t* new_msg=msg;
+    buffer->cells[d_pos]=*new_msg;
+    buffer->D=(d_pos+1)%((buffer->size));
+    buffer->K++;
+    
+    pthread_cond_signal(&buffer->notEmpty);
+    pthread_mutex_unlock(&buffer->bufferMutex);
+    
+    return new_msg;
+}
+
+
+void do_put_bloccante_TestSupport(void* arguments){
+    struct arg_structTest *args=arguments;
+    msg_t* msg=put_bloccante_TestSupport(args->buffer, args->msg,args->sleepingMutex,args->isAwake,args->isSleeping,args->sleepState);
+    pthread_exit(msg);
+}
+
+void iamgoingtosleep(pthread_mutex_t* sleepingMutex,pthread_cond_t* isSleeping,int* sleepState){
+    pthread_mutex_lock(sleepingMutex);
+    *sleepState=1;
+    pthread_cond_signal(isSleeping);
+    pthread_mutex_unlock(sleepingMutex);
+}
+
+void iamAwake(pthread_mutex_t* sleepingMutex,pthread_cond_t* isAwake,int* sleepState){
+    pthread_mutex_lock(sleepingMutex);
+    *sleepState=0;
+    pthread_cond_signal(isAwake);
+    pthread_mutex_unlock(sleepingMutex);
+}
+
+
